@@ -247,10 +247,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 189e217642a724441b93a6d1fef2337e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefab: {fileID: 8625091449405240997, guid: b4dcecb699caee94c9261bfe44f12c7f, type: 3}
-  objectCount: 100
-  spacing: 1.5
+  testObjectPrefab: {fileID: 8625091449405240997, guid: b4dcecb699caee94c9261bfe44f12c7f, type: 3}
+  objectCount: 1000
+  useCircleCollider: 0
+  useRigidbody: 1
   applyGravity: 0
+  spacing: 1.5
+  testDuration: 10
 --- !u!1 &2002083640
 GameObject:
   m_ObjectHideFlags: 0

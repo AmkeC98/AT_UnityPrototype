@@ -1,16 +1,50 @@
+using System.Collections;
 using UnityEngine;
+using System.IO;
 
-public class ObjectSpawner : MonoBehaviour
+public class Spawner : MonoBehaviour
 {
-    public GameObject prefab;
+    public GameObject testObjectPrefab;
     public int objectCount = 100;
-    public float spacing = 1.5f;
+    public bool useCircleCollider = false;
+    public bool useRigidbody = true;
     public bool applyGravity = false;
+    public float spacing = 1.5f;
+    public float testDuration = 10f;
+
+    private float timeAccumulator = 0f;
+    private int frameCounter = 0;
+    private float testTimer = 0f;
+    private float fpsSum = 0f;
+    private int fpsSamples = 0;
 
     private void Start()
     {
         SpawnObjects();
-        InvokeRepeating(nameof(LogFPS), 1f, 1f); // Log FPS every second
+    }
+
+    private void Update()
+    {
+        timeAccumulator += Time.deltaTime;
+        frameCounter++;
+        testTimer += Time.deltaTime;
+
+        if (timeAccumulator >= 1f)
+        {
+            float fps = frameCounter / timeAccumulator;
+            Debug.Log($"FPS: {fps:F2}");
+            fpsSum += fps;
+            fpsSamples++;
+
+            timeAccumulator = 0f;
+            frameCounter = 0;
+        }
+
+        if (testTimer >= testDuration)
+        {
+            ExportToCSV();
+            enabled = false;
+        }
     }
 
     private void SpawnObjects()
@@ -23,20 +57,50 @@ public class ObjectSpawner : MonoBehaviour
             int y = i / rowLength;
 
             Vector2 position = new Vector2(x * spacing, y * spacing);
-            GameObject obj = Instantiate(prefab, position, Quaternion.identity);
+            GameObject obj = Instantiate(testObjectPrefab, position, Quaternion.identity);
 
             Rigidbody2D rb = obj.GetComponent<Rigidbody2D>();
-            if (rb != null)
+            Collider2D col = obj.GetComponent<Collider2D>();
+
+            if (!useRigidbody)
+            {
+                Destroy(rb);
+            }
+            else
             {
                 rb.gravityScale = applyGravity ? 1f : 0f;
-                //rb.linearVelocity = applyGravity ? Vector2.zero : new Vector2(1f, 0f); // Optional: constant horizontal motion
+                rb.bodyType = RigidbodyType2D.Dynamic;
+            }
+
+            // Replace collider
+            Destroy(col);
+            if (useCircleCollider)
+            {
+                obj.AddComponent<CircleCollider2D>();
+            }
+            else
+            {
+                obj.AddComponent<BoxCollider2D>();
             }
         }
     }
 
-    private void LogFPS()
+    private void ExportToCSV()
     {
-        float fps = 1.0f / Time.deltaTime;
-        Debug.Log("FPS: " + fps.ToString());
+        float avgFPS = fpsSamples > 0 ? fpsSum / fpsSamples : 0f;
+        string path = Path.Combine("D:\\CMGT\\24-25\\Advanced_Tools\\AT_Assignment\\TestResults", "unity_fps_results.csv");
+
+        bool fileExists = File.Exists(path);
+        using (StreamWriter writer = new StreamWriter(path, true))
+        {
+            if (!fileExists)
+            {
+                writer.WriteLine("ObjectCount,UseRigidbody,UseCircle,ApplyGravity,AvgFPS");
+            }
+
+            writer.WriteLine($"{objectCount},{useRigidbody},{useCircleCollider},{applyGravity},{avgFPS:F2}");
+        }
+
+        Debug.Log($"Results written to: {path}");
     }
 }
