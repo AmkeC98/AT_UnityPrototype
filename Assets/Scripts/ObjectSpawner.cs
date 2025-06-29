@@ -5,6 +5,8 @@ using System.IO;
 public class Spawner : MonoBehaviour
 {
     public GameObject testObjectPrefab;
+    public Sprite squareImage;
+    public Sprite circleImage;
     public int objectCount = 100;
     public bool useCircleCollider = false;
     public bool useRigidbody = true;
@@ -61,6 +63,7 @@ public class Spawner : MonoBehaviour
 
             Rigidbody2D rb = obj.GetComponent<Rigidbody2D>();
             Collider2D col = obj.GetComponent<Collider2D>();
+            SpriteRenderer sr = obj.GetComponent<SpriteRenderer>();
 
             if (!useRigidbody)
             {
@@ -77,10 +80,12 @@ public class Spawner : MonoBehaviour
             if (useCircleCollider)
             {
                 obj.AddComponent<CircleCollider2D>();
+                sr.sprite = circleImage;
             }
             else
             {
                 obj.AddComponent<BoxCollider2D>();
+                sr.sprite = squareImage;
             }
         }
     }
