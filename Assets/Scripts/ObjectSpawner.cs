@@ -13,6 +13,7 @@ public class Spawner : MonoBehaviour
     public bool applyGravity = false;
     public float spacing = 1.5f;
     public float testDuration = 10f;
+    public float initialSpeed = 5f;
 
     private float timeAccumulator = 0f;
     private int frameCounter = 0;
@@ -22,6 +23,7 @@ public class Spawner : MonoBehaviour
 
     private void Start()
     {
+        Random.InitState(1);
         SpawnObjects();
     }
 
@@ -73,9 +75,10 @@ public class Spawner : MonoBehaviour
             {
                 rb.gravityScale = applyGravity ? 1f : 0f;
                 rb.bodyType = RigidbodyType2D.Dynamic;
+                Vector2 dir = Random.insideUnitCircle.normalized;
+                rb.linearVelocity = dir * initialSpeed;
             }
 
-            // Replace collider
             Destroy(col);
             if (useCircleCollider)
             {

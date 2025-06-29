@@ -250,7 +250,7 @@ MonoBehaviour:
   testObjectPrefab: {fileID: 8625091449405240997, guid: b4dcecb699caee94c9261bfe44f12c7f, type: 3}
   squareImage: {fileID: 491113259147209143, guid: 4dd62936d0609f04a9d8fb22747e4f31, type: 3}
   circleImage: {fileID: 543462811583458228, guid: 594131402b66b7244a55f3d9d5e997f7, type: 3}
-  objectCount: 10000
+  objectCount: 5000
   useCircleCollider: 0
   useRigidbody: 1
   applyGravity: 1
